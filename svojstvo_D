@@ -1,0 +1,26 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int svojstvoDr(vector<int>&v, int p, int k){
+    if(p==k)return 0;
+    if(p+1==k){
+        if(v[k]%v[p]==0)return 1;
+    }
+    int mid = (p+k)/2;
+    int uk = 0;
+    if(v[mid+1]%v[mid]==0)uk++;
+    uk+= svojstvoDr(v,p,mid);
+    uk+= svojstvoDr(v,mid+1,k);
+    return uk;
+}
+
+int svojstvoD(vector<int>&v){
+    if(v.size()<2)throw "Broj elemenata mora biti >2";
+    return svojstvoDr(v, 0, v.size()-1);
+}
+
+int main(){
+    vector<int>v{1,2,4,8,16,32};
+    cout<<svojstvoD(v);
+return 0;}
