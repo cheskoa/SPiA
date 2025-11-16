@@ -21,6 +21,10 @@ int svojstvoD(vector<int>&v){
 }
 
 int main(){
-    vector<int>v{1,2,4,8,16,32};
-    cout<<svojstvoD(v);
+    try{
+        vector<int>v{1,2,4,8,16,32};
+        cout<<svojstvoD(v);
+    }catch(const char* msg){
+        cout<<msg;
+    }
 return 0;}
