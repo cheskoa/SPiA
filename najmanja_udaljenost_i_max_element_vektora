@@ -1,0 +1,71 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+template<typename T>
+T max_elem_vektor_r(vector<T>& v, int p, int k) {
+    if(p+1 == k) {
+        if(v[p] > v[k]) {
+            return v[p];
+        }
+        return v[k];
+    }
+    else if (p + 2 == k) {
+        if (v[p] > v[p + 1]) {
+            if (v[p] > v[p + 2]) {
+                return v[p];
+            }
+            return v[p + 2];
+        } else if (v[p + 1] > v[p + 2]) {
+            return v[p + 1];
+        }
+        return v[p + 2];
+    }
+    int mid = (p + k) / 2;
+    T l = max_elem_vektor_r(v, p, mid);
+    T r = max_elem_vektor_r(v, mid + 1, k);
+    return (l > r ? l : r);
+}
+
+
+template<typename T>
+T max_elem_vektor(vector<T>&v){
+    if(v.size()<1)throw "Niz je prazan";
+    if(v.size()==1)return v[0];
+    return max_elem_vektor_r(v,0,v.size()-1);
+}
+
+int najmanja_udaljenost_r(vector<int>&v, int p, int k){
+    int nu = max_elem_vektor(v);
+    if(p==k) return v[p];
+    if(p+1==k)return abs(v[p]-v[k]);
+    int mid = (p+k)/2;
+    int preklapanje = max_elem_vektor(v);
+    if (abs(v[mid]-v[mid-1])<abs(v[mid]-v[mid+1])){
+        preklapanje = abs(v[mid]-v[mid-1]);
+    }else{preklapanje=abs(v[mid]-v[mid+1]);}
+    int l = najmanja_udaljenost_r(v,p,mid);
+    int r = najmanja_udaljenost_r(v,mid+1,k);
+    if(r<nu || l<nu){
+        if(r<l){
+            nu = r;
+        }else{
+            nu=l;
+        }
+    }
+    if(preklapanje<nu)return preklapanje;
+    return nu;
+}
+
+int najmanja_udaljenost(vector<int>&v){
+    if(v.size()<2)throw "Niz je premal";
+    return najmanja_udaljenost_r(v,0,v.size()-1);
+}
+
+int main(){
+    try{
+        vector<int>v{5,7,23,54,34,65,64,43,45};
+        cout<<najmanja_udaljenost(v);
+    }catch(const char* msg){
+        cout<<msg;}
+return 0;}
