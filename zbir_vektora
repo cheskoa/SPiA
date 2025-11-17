@@ -1,0 +1,24 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int zbir_vektora_r(vector<int>&v, int p, int k){
+    if(p+1==k)return v[p]+v[p+1];
+    if(p+2==k)return v[p]+v[p+1]+v[p+2];
+    int mid = (p+k)/2;
+    return zbir_vektora_r(v,p,mid) + zbir_vektora_r(v,mid+1,k);
+}
+
+int zbir_vektora(vector<int>&v){
+    if(v.size()<1)throw "Vektor je prazan";
+    if(v.size()==1)return v[0];
+    return zbir_vektora_r(v,0,v.size()-1);
+}
+
+int main(){
+    try{
+        vector<int>v{1,2,3,4,5};
+        cout<<zbir_vektora(v);
+    }catch(const char* msg){cout<<msg;}
+    return 0;
+}
