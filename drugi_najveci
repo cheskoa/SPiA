@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+class PiD {
+    int v, m;
+public:
+    PiD() : v(0), m(0) {}
+    PiD(int vp, int mp) : v(vp), m(mp) {}
+
+    int getV() const { return v; }
+    int getM() const { return m; }
+};
+PiD drugi_najveci_r(vector<int>& v, int p, int k) {
+    if (p + 1 == k) {
+        if (v[p] > v[k]) return PiD(v[p], v[k]);
+        else return PiD(v[k], v[p]);
+    }
+    if (p + 2 == k) {
+        int a = v[p], b = v[p+1], c = v[p+2];
+        int najveci, drugi;
+        if (a > b && a > c) {
+            najveci = a;
+            if (b > c) drugi = b;
+            else drugi = c;
+        } else if (b > a && b > c) {
+            najveci = b;
+            if (a > c) drugi = a;
+            else drugi = c;
+        } else {
+            najveci = c;
+            if (a > b) drugi = a;
+            else drugi = b;
+        }
+        return PiD(najveci, drugi);
+    }
+    int mid = (p + k) / 2;
+    PiD l = drugi_najveci_r(v, p, mid);
+    PiD r = drugi_najveci_r(v, mid + 1, k);
+    int najveci, drugi;
+    if (l.getV() > r.getV()) {
+        najveci = l.getV();
+        if (l.getM() > r.getV()) drugi = l.getM();
+        else drugi = r.getV();
+    } else {
+        najveci = r.getV();
+        if (r.getM() > l.getV()) drugi = r.getM();
+        else drugi = l.getV();
+    }
+    return PiD(najveci, drugi);
+}
+PiD drugi_najveci(vector<int>& v) {
+    if (v.size() < 2) throw "Vektor premali!";
+    return drugi_najveci_r(v, 0, v.size() - 1);
+}
+int main() {
+    try{
+    vector<int> v{1, 7, 43, 5, 7,45,43,23,766};
+    PiD drugi = drugi_najveci(v);
+    cout<< drugi.getM() << endl;
+    }catch(const char* msg){cout<<msg;}
+    return 0;
+}
