@@ -1,30 +1,28 @@
-#include<iostream>
-#include<vector>
+#include <iostream>
+#include <vector>
 using namespace std;
-int aritmeticka_sredina_rekurentno(vector<int>&v, int p, int k){
-    for(int a:v)cout<<a<<" ";
-    cout<<endl;
+
+int ar_sr_r(vector<int>&v, int p, int k){
     if(k-p+1<3)return 0;
-    int broj_elemenata = 0;
+    if(p+2==k)if(v[p+1]*2==v[p]+v[p+2])return 1;
     int mid = (p+k)/2;
-    cout<<v[mid]<<endl;
-    if(k-p+1==3){
-        if(v[mid]*2==v[p]+v[k])broj_elemenata++;
-    }else{
-        if (v[mid] * 2 == v[mid - 1] + v[mid + 1])broj_elemenata++;
-        broj_elemenata += aritmeticka_sredina_rekurentno(v,p,mid-1);
-        broj_elemenata +=aritmeticka_sredina_rekurentno(v,mid+1,k);
-    }
-    return broj_elemenata;
+    int b_sr = 0;
+    int l = ar_sr_r(v,p,mid);
+    int r = ar_sr_r(v,mid+1,k);
+
+    if(mid-1>=p && mid+1<=k)if(v[mid]*2==v[mid-1]+v[mid+1])b_sr++;
+    if(mid-2>=p)if(v[mid-1]*2==v[mid-2]+v[mid])b_sr++;
+    if(mid+2<=k)if(v[mid+1]*2==v[mid+2]+v[mid])b_sr++;
+    return b_sr + l + r;
 }
-int aritmeticka_sredina(vector<int>&v){
-    if(v.size()<3)throw "Velicina vectora je manja od 3";
-    return aritmeticka_sredina_rekurentno(v,0,v.size()-1);
+
+int ar_sr(vector<int>&v){
+    if(v.size()<3)throw "Vektor mora biti min velicine 3";
+    return ar_sr_r(v,0,v.size()-1);
 }
-int main(){
-    try{
-        vector<int>v{1,2,3,4,5,6};
-        cout<<aritmeticka_sredina(v);
-    }catch(const char* msg){
-        cout<<msg;}
-return 0;}
+
+int main() {
+    vector<int> v{0,2,4,3,5,7,2};
+    cout << ar_sr(v);
+    return 0;
+}
