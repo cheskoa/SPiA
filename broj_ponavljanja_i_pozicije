@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-
 class BP_P{
     int bp;
     vector<int> p;
@@ -12,10 +11,10 @@ public:
     }
     void print_broj_ponavljanja(){cout<<bp<<endl;};
     void print_pozicije(){
-        for(auto poz : p) cout<<poz<<" ";cout<<endl;
+        if(bp==0)cout<<"Nema podudaranja";
+        else for(auto poz : p) cout<<poz<<" ";cout<<endl;
     }
 };
-
 template<typename T>
 vector<int> pozicije(vector<T>v, int p, int k, T x){
     if(p==k)if(v[p]==x){
@@ -42,7 +41,6 @@ vector<int> pozicije(vector<T>v, int p, int k, T x){
     l.insert(l.end(), r.begin(), r.end());
     return l;
 }
-
 template<typename T>
 int broj_ponavljanja(vector<T>&v,int p, int k,T x){
     if(p == k)if(v[p]==x){
