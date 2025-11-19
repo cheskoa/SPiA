@@ -10,8 +10,7 @@ int ukupno_r(vector<int>&v, int p, int k){
     }
     int broj_ponavljanja = 0;
     int mid = (k+p)/2;
-    if(mid-1>=p && mid+1<=k){
-            if(v[mid-1] == 5 && v[mid]==5 && v[mid+1]== 5) broj_ponavljanja++;}
+    if(mid-1>=p && mid+1<=k)if(v[mid-1] == 5 && v[mid]==5 && v[mid+1]== 5) broj_ponavljanja++;
     if(mid-2>=p)if(v[mid-2] == 5 && v[mid-1] == 5 && v[mid]==5) broj_ponavljanja++;
     if(mid+2<=k)if(v[mid]==5 && v[mid+1]==5 && v[mid+2]==5) broj_ponavljanja ++;
     int l = ukupno_r(v,p,mid);
