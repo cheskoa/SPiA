@@ -1,0 +1,32 @@
+#include<iostream>
+#include<vector>
+#include<cmath>
+using namespace std;
+//koliko ima uzastopnih petica divide and conqueror
+int ukupno_r(vector<int>&v, int p, int k){
+    if((k-p+1)<3) return 0;
+    if((k-p+1) == 3){
+        if(v[p] == 5 && v[p+1]== 5 && v[p+2] == 5)return 1;
+    }
+    int broj_ponavljanja = 0;
+    int mid = (k+p)/2;
+    if(mid-1>=p && mid+1<=k){
+            if(v[mid-1] == 5 && v[mid]==5 && v[mid+1]== 5) broj_ponavljanja++;}
+    if(mid-2>=p)if(v[mid-2] == 5 && v[mid-1] == 5 && v[mid]==5) broj_ponavljanja++;
+    if(mid+2<=k)if(v[mid]==5 && v[mid+1]==5 && v[mid+2]==5) broj_ponavljanja ++;
+    int l = ukupno_r(v,p,mid);
+    int r = ukupno_r(v,mid+1,k);
+    return abs(broj_ponavljanja + l + r-1);
+}
+
+int ukupno(vector<int>&v){
+    if(v.size()<3) throw "Niz mora biti 3 ili veci";
+    return ukupno_r(v,0,v.size()-1);
+}
+
+int main(){
+    try{
+        vector<int>v{1,5,5,5,5,1,5,5,1,5,5,5,5,1};
+        cout<<ukupno(v);
+    }catch(const char* msg){cout<<msg;}
+return 0;}
