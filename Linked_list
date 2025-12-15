@@ -157,6 +157,19 @@ public:
             }
         }
     }
+    void okreni() {
+    Cvor<T>* p = nullptr;
+    Cvor<T>* t = pocetak;
+    Cvor<T>* s = nullptr;
+
+    while (t != nullptr) {
+        s = t->next;
+        t->next = p;
+        p = t;
+        t = s;
+    }
+    pocetak = p;
+}
 
 };
 
@@ -175,5 +188,7 @@ int main(){
     l3.dodaj(9);
     l3.dodaj(9);
     l3.spoji_u(l,l2);
+    l3.test();
+    l3.okreni();
     l3.test();
 return 0;}
