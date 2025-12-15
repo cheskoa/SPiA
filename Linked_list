@@ -21,10 +21,27 @@ public:
             p = temp;
         }
     };
+    void dodaj_sort(const T v){
+        auto c = new Cvor(v);
+        if(pocetak == nullptr){
+            c->next=pocetak;
+            pocetak=c;
+        }else{
+            auto p = pocetak;
+            while(p->next!=nullptr && p->next->val<v){
+                p=p->next;
+            }
+            c->next=p->next;
+            p->next=c;
+        }
+    }
     void dodaj(const T v){
         auto c = new Cvor(v);
-        c->next=pocetak;
-        pocetak = c;
+        if(pocetak==nullptr)pocetak=c;
+        else{
+            c->next=pocetak;
+            pocetak = c;
+        }
     }
     void dodaj_kraj(const T v){
         auto c = new Cvor(v);
@@ -140,15 +157,16 @@ public:
             }
         }
     }
-    
+
 };
 
 
 int main(){
     Lista<int>l;
-    l.dodaj(1);
-    l.dodaj(2);
-    l.dodaj(3);
+    l.dodaj(9);
+    l.dodaj(5);
+    l.dodaj(8);
+    l.test();
     l.dodaj_kraj(4);
     Lista<int>l2;
     l2.dodaj(1);
