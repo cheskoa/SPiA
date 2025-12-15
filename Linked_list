@@ -1,0 +1,161 @@
+#include<iostream>
+using namespace std;
+
+template<typename T>
+class Cvor{
+public:
+    T val;
+    Cvor<T>* next;
+    Cvor(T v):val(v),next(nullptr){};
+};
+template<typename T>
+class Lista{
+    Cvor<T>* pocetak;
+public:
+    Lista():pocetak(nullptr){};
+    ~Lista(){
+        auto p = pocetak;
+        while(p!=nullptr){
+            auto temp = p->next;
+            delete p;
+            p = temp;
+        }
+    };
+    void dodaj(const T v){
+        auto c = new Cvor(v);
+        c->next=pocetak;
+        pocetak = c;
+    }
+    void dodaj_kraj(const T v){
+        auto c = new Cvor(v);
+        if(pocetak == nullptr)pocetak = c;
+        else{
+            auto naredni = pocetak;
+            while(naredni->next!=nullptr)naredni=naredni->next;
+            naredni->next=c;
+        }
+    }
+    void obrisi(const T v){
+        auto naredni = pocetak;
+        auto prosli = &pocetak;
+        while(naredni!=nullptr){
+            if(naredni->val == v){
+                *prosli = naredni->next;
+                delete naredni;
+                return;
+            }
+            prosli = &naredni->next;
+            naredni = naredni->next;
+        }
+    }
+    void test(){
+        auto p = pocetak;
+        while(p != nullptr){
+            cout<<p->val<<" ";
+            p=p->next;
+        }
+        cout<<endl;
+    }
+    void obrisi_vece(const T v){
+        auto naredni = pocetak;
+        auto prosli = &pocetak;
+        while(naredni!=nullptr){
+            if(naredni->val > v){
+                *prosli = naredni->next;
+                delete naredni;
+                naredni = *prosli;
+            }else{
+                prosli = &naredni->next;
+                naredni = naredni->next;
+            }
+        }
+    }
+    void obrisi_manje(const T v){
+        auto naredni = pocetak;
+        auto prosli = &pocetak;
+        while(naredni!=nullptr){
+            if(naredni->val < v){
+                *prosli = naredni->next;
+                delete naredni;
+                naredni = *prosli;
+            }else{
+                prosli = &naredni->next;
+                naredni = naredni->next;
+            }
+        }
+    }
+    void pomnozi_sa(const T v){
+        Cvor<T>* p = pocetak;
+        while(p!=nullptr){
+            p->val *=v;
+            p=p->next;
+        }
+    }
+    void spoji_sa(const Lista<T>& l){
+        auto p = l.pocetak;
+        if(pocetak==nullptr){
+            while(p!=nullptr){
+                dodaj_kraj(p->val);
+                p=p->next;
+            }
+        }else{
+            auto k = pocetak;
+            while(k->next!=nullptr){
+                k=k->next;
+            }
+            while(p!=nullptr){
+                k->next=new Cvor(p->val);
+                k=k->next;
+                p=p->next;
+            }
+        }
+    }
+    void spoji_u(const Lista<T>&l1, const Lista<T>& l2){
+        auto p = l1.pocetak;
+        if(pocetak==nullptr){
+            while(p!=nullptr){
+                dodaj(p->val);
+                p=p->next;
+            }
+            auto p = l2.pocetak;
+            while(p!=nullptr){
+                dodaj(p->val);
+                p=p->next;
+            }
+        }else{
+            auto k = pocetak;
+            while(k->next!=nullptr){
+                k=k->next;
+            }
+            while(p!=nullptr){
+                k->next=new Cvor(p->val);
+                k=k->next;
+                p=p->next;
+            }
+            p = l2.pocetak;
+            while(p!=nullptr){
+                k->next=new Cvor(p->val);
+                k=k->next;
+                p=p->next;
+            }
+        }
+    }
+    
+};
+
+
+int main(){
+    Lista<int>l;
+    l.dodaj(1);
+    l.dodaj(2);
+    l.dodaj(3);
+    l.dodaj_kraj(4);
+    Lista<int>l2;
+    l2.dodaj(1);
+    l2.dodaj(1);
+    Lista<int>l3;
+    l3.dodaj(9);
+    l3.dodaj(9);
+    l3.spoji_u(l,l2);
+    l3.test();
+return 0;}
