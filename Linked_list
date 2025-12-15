@@ -158,18 +158,18 @@ public:
         }
     }
     void okreni() {
-    Cvor<T>* p = nullptr;
-    Cvor<T>* t = pocetak;
-    Cvor<T>* s = nullptr;
+        Cvor<T>* p = nullptr;
+        Cvor<T>* t = pocetak;
+        Cvor<T>* s = nullptr;
 
-    while (t != nullptr) {
-        s = t->next;
-        t->next = p;
-        p = t;
-        t = s;
+        while (t != nullptr) {
+            s = t->next;
+            t->next = p;
+            p = t;
+            t = s;
+        }
+        pocetak = p;
     }
-    pocetak = p;
-}
 
 };
 
