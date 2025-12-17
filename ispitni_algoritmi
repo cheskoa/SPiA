@@ -1,0 +1,130 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+void quick(vector<int>& v, int p, int k){
+    if(p>=k)return;
+    int mid = (p+k)/2;
+    int pivot = v[mid];
+    swap(v[mid],v[k]);
+    int i = p;
+    int j = k-1;
+    while(true){
+        while(v[i]<pivot)i++;
+        while(j>=p && v[j]>pivot)j--;
+        if(i>=j)break;
+        swap(v[i],v[j]);
+        i++;j--;
+    }
+    swap(v[i],v[k]);
+    quick_sort(v,p,i-1);
+    quick_sort(v,i+1,k);
+}
+
+int nadji_cifru(int x, int p){
+    while(p>0){
+        x /= 10;
+        p--;
+    }
+    return x%10;
+}
+void radix(vector<int>& v){
+    vector<vector<int>> t(10);
+    for(int i(0); i<10; i++){
+        for(auto x : v){
+            int cifra = nadji_cifru(x,i);
+            t[cifra].push_back(x);
+        }
+        int pk = 0;
+        for(auto& k : t){
+            for(auto x : k)v[pk++] = x;
+            k.clear();
+        }
+    }
+}
+
+void bucket(vector<int>&v){
+    vector<int>t(10,0);
+    for(auto x : v)t[x]++;
+    int p = 0;
+    for(int i(0); i < 10; i++){
+        for(int j(0); j < t[i]; j++)v[p++]=i;
+    }
+}
+
+void insertion(vector<int>&v){
+    for(int i=1; i < v.size();i++){
+        int j = i;
+        while(j>0 && v[j-1]>v[j]){
+            swap(v[j-1],v[j]);
+            j--;
+        }
+    }
+}
+
+void shell(vector<int>&v){
+    int r = v.size()/2;
+    while(r!=0){
+        for(int i = r; i < v.size(); i++){
+            int j = i;
+            while(j>=r && v[j-r]>v[j]){
+                swap(v[j-r],v[j]);
+                j-=r;
+            }
+        }
+        r/=2;
+    }
+}
+void merge(vector<int>&v, int l, int m, int d){
+    vector<int> t;
+    int i = l;
+    int j = m+1;
+    while(i<=m && j<=d){
+        if(v[i]<=v[j])t.push_back(v[i++]);
+        else t.push_back(v[j++]);
+    }
+    while(i<=m)t.push_back(v[i++]);
+    while(j<=d)t.push_back(v[j++]);
+    for(int k = 0; k < t.size(); k++)v[l+k]=t[k];
+}
+void merge_sort(vector<int>&v, int l, int d){
+   int duz = d-l+1;
+    if(duz<=1)return;
+    if(duz==2){if(v[l]>v[d])swap(v[l],v[d]);return;}
+    if(duz==3){
+        if(v[l]>v[l+1])swap(v[l],v[l+1]);
+        if(v[l+1]>v[d])swap(v[l+1],v[d]);
+        if(v[l]>v[l+1])swap(v[l],v[l+1]);
+        return;
+    }
+    int mid = (l+d)/2;
+    merge_sort(v,l,mid);
+    merge_sort(v,mid+1,d);
+    merge(v,l,mid,d);
+}
+int main(){
+    vector<int>vquick{5,2,7,3,9,1,8,4,6};
+    quick(vquick, 0 ,vquick.size()-1);
+    for(auto x:vquick)cout<<x<<" ";
+    cout<<endl;
+    vector<int>vradix{543,23452,53467,75673,9345,1456,7568,4364,65675};
+    radix(vradix);
+    for(auto x:vradix)cout<<x<<" ";
+    cout<<endl;
+    vector<int>vbuck{5,4,5,3,2,7,3,9,1,8,4,6};
+    bucket(vbuck);
+    for(auto x:vbuck)cout<<x<<" ";
+    cout<<endl;
+    vector<int>vinsert{5,4,5,3,2,7,3,9,1,8,4,6};
+    insertion(vinsert);
+    for(auto x:vinsert)cout<<x<<" ";
+    cout<<endl;
+    vector<int>vshell{5,4,5,3,2,7,3,9,1,8,4,6};
+    shell(vshell);
+    for(auto x:vshell)cout<<x<<" ";
+    cout<<endl;
+    vector<int>vmerge{5,4,5,3,2,7,3,9,1,8,4,6};
+    merge_sort(vmerge,0,vmerge.size()-1);
+    for(auto x:vmerge)cout<<x<<" ";
+    return 0;
+}
