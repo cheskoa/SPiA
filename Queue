@@ -207,30 +207,53 @@ public:
             }
         }
     }
+    void obrisi_manje_s(T v){
+        while(pocetak!=nullptr && pocetak->val <= v){
+            auto p=pocetak;
+            pocetak=pocetak->next;
+            delete p;
+        }
+        auto p = pocetak;
+        while(p!=nullptr && p->next!=nullptr){
+            if(p->next->val<=v){
+                auto t = p->next;
+                p->next=p->next->next;
+                delete t;
+            }else{p=p->next;}
+        }
+    }
+    void obrisi_vece_s(T v){
+        while(pocetak!=nullptr && pocetak->val >= v){
+            auto p=pocetak;
+            pocetak=pocetak->next;
+            delete p;
+        }
+        auto p = pocetak;
+        while(p!=nullptr && p->next!=nullptr){
+            if(p->next->val>v){
+                auto t = p->next;
+                p->next=p->next->next;
+                delete t;
+            }else{p=p->next;}
+        }
+
+    }
+
+
 
 };
 
 int main(){
     Red<int> r;
-    r.dodaj(1);
-    r.dodaj(2);
-    r.dodaj(3);
-    r.ispisi();
+    r.dodaj_sort_m(1);
+    r.dodaj_sort_m(6);
+    r.dodaj_sort_m(9);
+    r.dodaj_sort_m(5);
+    r.dodaj_sort_m(2);
+    r.dodaj_sort_m(4);
     Red<int>r2(r);
-    r2.ispisi();
-    r2.pop_back();
-    r2.ispisi();
-    Red<int>rez;
-    rez=r+r2;
-    rez.ispisi();
-    rez+=r2;
-    int d = rez.size();
-    cout<<d<<endl;
-    rez.ispisi();
-    r.okreni();
+    r.obrisi_manje_s(4);
+    r2.obrisi_vece_s(4);
     r.ispisi();
-    r.obrisi_manje(3);
-    r.ispisi();
-    rez.obrisi_manje(2);
-    rez.ispisi();
+    r2.ispisi();
 return 0;}
