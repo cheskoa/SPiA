@@ -1,0 +1,236 @@
+#include<iostream>
+using namespace std;
+template<typename T>
+class Cvor{
+public:
+    T val;
+    Cvor<T>* next;
+    Cvor(T v):val(v),next(nullptr){};
+    ~Cvor(){
+
+    }
+};
+template<typename T>
+class Red{
+public:
+    Cvor<T>* pocetak;
+    Cvor<T>* kraj;
+    size_t duzina;
+    Red():pocetak(nullptr),kraj(nullptr),duzina(0){};
+    Red(Red<T>& r){
+        pocetak=nullptr;
+        kraj = nullptr;
+        duzina = 0;
+        auto p = r.pocetak;
+        while(p!=nullptr){
+            dodaj(p->val);
+            p=p->next;
+        }
+    }
+    Red operator =(const Red<T>& r){
+        if(this == &r)return *this;
+        while(pocetak!=nullptr)pop();
+        auto p = r.pocetak;
+        while(p!=nullptr){
+            dodaj(p->val);
+            p=p->next;
+        }
+        return *this;
+
+    }
+    void dodaj(T v){
+        auto c = new Cvor(v);
+        if(pocetak==nullptr){
+            pocetak = kraj = c;
+            duzina++;
+            return;
+        }
+        kraj->next = c;
+        kraj = c;
+        duzina++;
+    };
+    void dodaj_sort_m(T v){
+        auto c = new Cvor(v);
+        duzina++;
+        if(pocetak==nullptr){
+            pocetak=kraj=c;
+            return;
+        }
+        if(v<pocetak->val){
+            c->next=pocetak;
+            pocetak=c;
+            return;
+        }
+        auto p = pocetak;
+        while(p->next!=nullptr && p->next->val<v){
+            p=p->next;
+        }
+        c->next=p->next;
+        p->next=c;
+        if(c->next==nullptr)kraj=c;
+    }
+    void dodaj_sort_v(T v){
+        auto c = new Cvor(v);
+        duzina++;
+        if(pocetak==nullptr){
+            pocetak=kraj=c;
+            return;
+        }
+        if(v>pocetak->val){
+            c->next=pocetak;
+            pocetak=c;
+            return;
+        }
+        auto p = pocetak;
+        while(p->next!=nullptr && p->next->val>v){
+            p=p->next;
+        }
+        c->next=p->next;
+        p->next=c;
+        if(c->next==nullptr)kraj=c;
+    }
+    void pop(){
+        if(pocetak == nullptr)throw "Red prazan";
+        auto p = pocetak;
+        pocetak = pocetak->next;
+        if(pocetak == nullptr)kraj=nullptr;
+        delete p;
+        duzina--;
+    }
+    void pop_back(){
+        if(pocetak == nullptr)throw "Red prazan";
+        if(pocetak->next==nullptr){
+            delete pocetak;
+            pocetak = kraj = nullptr;
+            duzina--;
+            return;
+        }
+        auto p = pocetak;
+        while(p->next->next!=nullptr)p=p->next;
+        delete p->next;
+        p->next=nullptr;
+        kraj=p;
+        duzina--;
+    }
+    bool empty(){return pocetak==nullptr;}
+    void ispisi(){
+        auto p = pocetak;
+        auto k = kraj;
+        while(p!=nullptr){
+            cout<<p->val<<" ";
+            p=p->next;
+        }
+        cout<<endl;
+    }
+    T& front(){
+        if(pocetak==nullptr)throw "Red prazan";
+        return pocetak->val;
+    }
+    T& back(){
+        if(kraj==nullptr)throw "Red prazan";
+        return kraj->val;
+    }
+    int size(){return duzina;}
+    Red<T> operator +=(Red<T>& r){
+        auto p = r.pocetak;
+        while(p!=nullptr){
+            dodaj(p->val);
+            p=p->next;
+        }
+        return *this;
+    }
+    Red<T> operator +(Red<T>& r){
+        Red<T>rez(*this);
+        Cvor<T>* p = r.pocetak;
+        while(p!=nullptr){
+            rez.dodaj(p->val);
+            p=p->next;
+        }
+        return rez;
+    }
+    void okreni(){
+        Cvor<T>* p = nullptr;
+        Cvor<T>* t = pocetak;
+        Cvor<T>* s = nullptr;
+        while(t!=nullptr){
+            s = t->next;
+            t->next=p;
+            p = t;
+            t = s;
+        }
+        pocetak = kraj;
+        kraj = p;
+    }
+    void obrisi_manje(T v){
+        while(pocetak && pocetak->val < v){
+            auto p = pocetak;
+            pocetak = pocetak->next;
+            delete p;
+            duzina--;
+        }
+        if(!pocetak) {
+            kraj = nullptr;
+            return;
+        }
+        auto t = pocetak;
+        while(t->next){
+            if(t->next->val < v){
+                auto temp = t->next;
+                t->next = t->next->next;
+                delete temp;
+                duzina--;
+            } else {
+                t = t->next;
+            }
+        }
+    }
+    void obrisi_vece(T v){
+        while(pocetak && pocetak->val > v){
+            auto p = pocetak;
+            pocetak = pocetak->next;
+            delete p;
+            duzina--;
+        }
+        if(!pocetak) {
+            kraj = nullptr;
+            return;
+        }
+        auto t = pocetak;
+        while(t->next){
+            if(t->next->val > v){
+                auto temp = t->next;
+                t->next = t->next->next;
+                delete temp;
+                duzina--;
+            } else {
+                t = t->next;
+            }
+        }
+    }
+
+};
+
+int main(){
+    Red<int> r;
+    r.dodaj(1);
+    r.dodaj(2);
+    r.dodaj(3);
+    r.ispisi();
+    Red<int>r2(r);
+    r2.ispisi();
+    r2.pop_back();
+    r2.ispisi();
+    Red<int>rez;
+    rez=r+r2;
+    rez.ispisi();
+    rez+=r2;
+    int d = rez.size();
+    cout<<d<<endl;
+    rez.ispisi();
+    r.okreni();
+    r.ispisi();
+    r.obrisi_manje(3);
+    r.ispisi();
+    rez.obrisi_manje(2);
+    rez.ispisi();
+return 0;}
