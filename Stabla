@@ -1,0 +1,187 @@
+#include<iostream>
+#include<queue>
+using namespace std;
+
+template<typename T>
+class Stablo{
+private:
+    class Cvor{
+public:
+    T val;
+    Cvor *lijevo,*desno;
+    Cvor(T v):val(v),lijevo(nullptr),desno(nullptr){}
+    ~Cvor(){cout<<"brisemo cvor: "<<val<<endl;}
+    };
+    Cvor* korijen;
+    void dodajr(Cvor*& c, T v){
+        if(!c){
+            c=new Cvor(v);
+            return;
+        }
+        if(c->val>v)dodajr(c->lijevo, v);
+        else dodajr(c->desno, v);
+    }
+    void inorder(Cvor*& c){
+        if(!c)return;
+        inorder(c->lijevo);
+        cout<<c->val<<" ";
+        inorder(c->desno);
+    }
+    void preorder(Cvor*& c){
+        if(!c)return;
+        cout<<c->val<<" ";
+        preorder(c->lijevo);
+        preorder(c->desno);
+    }
+    void postorder(Cvor*& c){
+        if(!c)return;
+        postorder(c->lijevo);
+        postorder(c->desno);
+        cout<<c->val<<" ";
+    }
+    void ocistir(Cvor*& c){
+        if(!c)return;
+        ocistir(c->lijevo);
+        ocistir(c->desno);
+        delete c;
+    }
+    Cvor* obrisir(Cvor*& c, T v){
+        if(!c)return nullptr;
+        if(c->val>v)c->lijevo=obrisir(c->lijevo, v);
+        else if(c->val<v)c->desno=obrisir(c->desno, v);
+        else{
+            if(!c->lijevo){
+                auto t = c->desno;
+                delete c;
+                return t;
+            }
+            else if(!c->desno){
+                auto t = c->lijevo;
+                delete c;
+                return t;
+            }
+            else{
+                auto t = c->desno;
+                while(t->lijevo)t=t->lijevo;
+                c->val=t->val;
+                c->desno = obrisir(c->desno, t->val);
+            }
+        }
+        return c;
+    }
+    T najmanjir(Cvor* c){
+        if(!c)throw "prazno stablo";
+        if(!c->lijevo)return c->val;
+        return najmanjir(c->lijevo);
+    }
+    T najvecir(Cvor* c){
+        if(!c)throw "prazno stablo";
+        if(!c->desno)return c->val;
+        return najvecir(c->desno);
+    }
+    void nivoi(Cvor* c){
+        if(!c)return;
+        queue<Cvor*>q;
+        q.push(c);
+        while(!q.empty()){
+            int n = q.size();
+            bool sviNull = false;
+            for(int i{0}; i < n; i++){
+                auto t = q.front();
+                q.pop();
+                if(t){
+                    cout<<t->val<<" ";
+                    if(t->lijevo || t->desno)sviNull=false;
+                    q.push(t->lijevo);
+                    q.push(t->desno);
+                }else {
+                    cout<<"* ";
+                    q.push(nullptr);
+                    q.push(nullptr);
+                }
+            }
+            cout<<endl;
+            bool stop = true;
+            int v = q.size();
+            for(int i(0); i < v; i++){
+                if(q.front()!=nullptr)stop=false;
+                q.push(q.front());
+                q.pop();
+            }
+            if(stop)break;
+        }
+    }
+    bool postojir(Cvor* c, T v){
+        if(!c)return false;
+        if(c->val>v)return postojir(c->lijevo, v);
+        else if(c->val<v)return postojir(c->desno, v);
+        else return true;
+    }
+public:
+    Stablo():korijen(nullptr){};
+    void dodaj(T v){
+        dodajr(korijen, v);
+    }
+    void print_inorder(){
+        inorder(korijen);
+    }
+    void print_preorder(){
+        preorder(korijen);
+    }
+    void print_postorder(){
+        postorder(korijen);
+    }
+    void ocisti(){
+        ocistir(korijen);
+        korijen=nullptr;
+    }
+    void obrisi(T v){
+        obrisir(korijen, v);
+    }
+    T najmanji(){
+        return najmanjir(korijen);
+    }
+    T najveci(){
+        return najvecir(korijen);
+    }
+    void print_nivoi(){
+        nivoi(korijen);
+    }
+    bool postoji(T v){
+        return postojir(korijen, v);
+    }
+};
+
+int main(){
+    Stablo<int>s;
+    s.dodaj(3);
+    s.dodaj(1);
+    s.dodaj(5);
+    s.dodaj(4);
+    s.dodaj(6);
+    s.dodaj(2);
+    s.dodaj(7);
+    s.dodaj(8);
+    s.print_nivoi();
+    cout<<endl;
+    cout<<"postoji: "<<s.postoji(7)<<endl;
+    cout<<"postoji: "<<s.postoji(9)<<endl;
+    s.print_inorder();
+    cout<<endl;
+    s.print_postorder();
+    cout<<endl;
+    s.print_preorder();
+    cout<<endl;
+    s.obrisi(5);
+    s.print_inorder();
+    cout<<endl;
+    s.print_postorder();
+    cout<<endl;
+    s.print_preorder();
+    cout<<endl;
+    cout<<s.najmanji()<<" "<<s.najveci()<<endl;
+    s.ocisti();
+    s.dodaj(1);
+    s.dodaj(2);
+    s.print_inorder();
+}
