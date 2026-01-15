@@ -1,0 +1,167 @@
+#include <iostream>
+using namespace std;
+
+template<typename T>
+class CList {
+private:
+    class Element {
+    public:
+        T val;
+        Element* prosli;
+        Element* iduci;
+        Element(T v) : val(v), prosli(nullptr), iduci(nullptr) {}
+        ~Element() { cout << "brisemo: " << val << endl; }
+    };
+
+public:
+    class Iterator {
+    private:
+        Element* it;
+    public:
+        Iterator(Element* e) : it(e) {}
+
+        bool operator==(const Iterator& other) const { return it == other.it; }
+        bool operator!=(const Iterator& other) const { return !(*this == other); }
+
+        Iterator& operator++() {
+            if (!it) throw "invalid ptr";
+            it = it->iduci;
+            return *this;
+        }
+
+        Iterator operator++(int) {
+            if (!it) throw "invalid ptr";
+            Iterator temp = *this;
+            it = it->iduci;
+            return temp;
+        }
+
+        T& operator*() {
+            if (!it) throw "invalid ptr";
+            return it->val;
+        }
+    };
+
+private:
+    Element* pocetak;
+    Element* kraj;
+    size_t s;
+
+public:
+    CList() : pocetak(nullptr), kraj(nullptr), s(0) {}
+    CList(const CList& cl):
+        pocetak(nullptr),
+        kraj(nullptr),
+        s(0){
+        if(!cl.pocetak)throw "CLista prazna";
+        auto p = cl.pocetak;
+        do{
+            dodaj_kraj(p->val);
+            p=p->iduci;
+        }while(p!=cl.pocetak);
+    }
+    ~CList() { ocisti(); }
+
+    void dodaj_kraj(T v) {
+        auto e = new Element(v);
+        if (!pocetak) {
+            pocetak = kraj = e;
+            e->iduci = e;
+            e->prosli = e;
+        } else {
+            kraj->iduci = e;
+            pocetak->prosli = e;
+            e->iduci = pocetak;
+            e->prosli = kraj;
+            kraj = e;
+        }
+        s++;
+    }
+
+    void dodaj_pocetak(T v) {
+        auto e = new Element(v);
+        if (!pocetak) {
+            pocetak = kraj = e;
+            e->iduci = e;
+            e->prosli = e;
+        } else {
+            kraj->iduci = e;
+            pocetak->prosli = e;
+            e->iduci = pocetak;
+            e->prosli = kraj;
+            pocetak = e;
+        }
+        s++;
+    }
+
+    Iterator begin() { return Iterator(pocetak); }
+    Iterator end() { return Iterator(nullptr); }
+
+    void ispis() {
+        if (!pocetak) return;
+        auto p = pocetak;
+        do {
+            cout << p->val << " ";
+            p = p->iduci;
+        } while (p != pocetak);
+        cout << endl;
+    }
+
+    void ocisti() {
+        if (!pocetak) return;
+        auto p = pocetak;
+        do {
+            auto temp = p->iduci;
+            delete p;
+            p = temp;
+        } while (p != pocetak);
+        pocetak = kraj = nullptr;
+        s = 0;
+    }
+    void obrisi(T v){
+        if(!pocetak) throw "CList prazna";
+        auto p = pocetak;
+        do {
+            if(p->val == v){
+                auto next = p->iduci;
+
+                if(p == pocetak && p == kraj){
+                    delete p;
+                    pocetak = kraj = nullptr;
+                    s--;
+                    return;
+                }
+
+                p->prosli->iduci = p->iduci;
+                p->iduci->prosli = p->prosli;
+
+                if(p == pocetak) pocetak = p->iduci;
+                if(p == kraj) kraj = p->prosli;
+
+                delete p;
+                s--;
+                p = next;
+            } else {
+                p = p->iduci;
+            }
+        } while(p != pocetak);
+    }
+
+};
+
+int main() {
+    CList<int> l;
+    for (int i = 0; i < 10; i++) l.dodaj_kraj(i);
+
+    CList<int> l1;
+    for (int i = 0; i < 10; i++) l1.dodaj_pocetak(i);
+
+    l.ispis();
+    l1.ispis();
+    l.obrisi(5);
+    l.ispis();
+    CList<int>l2(l1);
+    l2.ispis();
+
+    return 0;
+}
