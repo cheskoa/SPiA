@@ -117,6 +117,12 @@ public:
         else if(c->val<v)return postojir(c->desno, v);
         else return true;
     }
+    Cvor* pronadjir(Cvor* c, T v){
+        if(!c)return nullptr;
+        if(c->val>v)return pronadjir(c->lijevo, v);
+        else if(c->val<v)return pronadjir(c->desno, v);
+        else return c;
+    }
 public:
     Stablo():korijen(nullptr){};
     void dodaj(T v){
@@ -150,6 +156,20 @@ public:
     bool postoji(T v){
         return postojir(korijen, v);
     }
+    void obrisi_lijevo(T v){
+        auto c = pronadjir(korijen, v);
+        if(c && c->lijevo){
+            ocistir(c->lijevo);
+            c->lijevo=nullptr;
+        }
+    }
+    void obrisi_desnoo(T v){
+        auto c = pronadjir(korijen, v);
+        if(c && c->desno){
+            ocistir(c->desno);
+            c->desno=nullptr;
+        }
+    }
 };
 
 int main(){
@@ -161,7 +181,11 @@ int main(){
     s.dodaj(6);
     s.dodaj(2);
     s.dodaj(7);
+    s.dodaj(9);
     s.dodaj(8);
+    s.dodaj(10);
+    s.print_nivoi();
+    s.obrisi_desnoo(6);
     s.print_nivoi();
     cout<<endl;
     cout<<"postoji: "<<s.postoji(7)<<endl;
