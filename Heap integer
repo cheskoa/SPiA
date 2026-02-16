@@ -1,0 +1,109 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+class Heap{
+private:
+    int* niz;
+    int kapacitet, velicina;
+    int roditelj(int i){return (i-1)/2;}
+    int lijevo(int i){return i*2+1;}
+    int desno(int i){return i*2+2;}
+
+public:
+    Heap():kapacitet(7),velicina(0){
+        niz = new int[kapacitet];
+    };
+    Heap(int n):kapacitet(n),velicina(0){
+        niz = new int[kapacitet];
+    };
+    Heap(int lista[], int n){
+        kapacitet = velicina = n;
+        niz = new int[velicina];
+        int i = 0;
+        while(i!=velicina)niz[i++]=lista[i];
+        buildHeap();
+    }
+    Heap(vector<int>v){
+        kapacitet = velicina = v.size();
+        niz = new int[velicina];
+        for(int i = 0; i < velicina;i++)niz[i]=v[i];
+        buildHeap();
+    }
+    ~Heap(){delete[] niz;};
+    void prosiri(){
+        int nk = kapacitet*2;
+        int* nn=new int[nk];
+        for(int i(0); i < velicina; i++){nn[i]=niz[i];}
+        delete[] niz;
+        niz = nn;
+        kapacitet = nk;
+    }
+    void dodajBezHeap(int x){
+        if(velicina==kapacitet)prosiri();
+        niz[velicina++]=x;
+    }
+    void propagirajNavise(int i){
+        while(i>0){
+            int r = roditelj(i);
+            if(niz[r]<=niz[i])break;
+            swap(niz[r],niz[i]);
+            i = r;
+        }
+    }
+    void dodaj(int x){
+    if(velicina==kapacitet)prosiri();
+    niz[velicina++]=x;
+    propagirajNavise(velicina -1);
+    }
+    void propagirajNanize(int i){
+        while(true){
+            int l = lijevo(i);
+            int d = desno(i);
+            int najmanji = i;
+            if(l<velicina&&niz[l]<niz[najmanji])najmanji=l;
+            if(d<velicina&&niz[d]<niz[najmanji])najmanji=d;
+            if(najmanji==i)break;
+            swap(niz[i],niz[najmanji]);
+            i=najmanji;
+        }
+    }
+    int brisiMin(){
+        if(velicina==0)throw "heap prazan";
+        int min = niz[0];
+        niz[0]=niz[velicina-1];
+        velicina--;
+        propagirajNanize(0);
+        return min;
+    }
+    void buildHeap(){
+        for(int i = velicina/2 -1; i>=0;i--)propagirajNanize(i);
+    }
+    void ispis(){
+    for(int i = 0; i < velicina; i++)cout<<niz[i]<<" ";
+    cout<<endl;
+    }
+};
+int main(){
+    Heap h;
+    h.dodaj(5);
+    h.dodaj(8);
+    h.dodaj(9);
+    h.dodaj(12);
+    h.dodaj(2);
+    h.dodaj(3);
+    h.ispis();
+    h.brisiMin();
+    h.ispis();
+    h.dodajBezHeap(1);
+    h.ispis();
+    h.buildHeap();
+    h.ispis();
+    int lista[] = {2,6,4,9,7,1,78,34,65};
+    Heap hh(lista,9);
+    hh.ispis();
+    vector<int>v={2,6,4,9,7,1,78,34,65};
+    Heap hhh(v);
+    hhh.ispis();
+    return 0;
+}
